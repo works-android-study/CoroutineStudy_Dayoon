@@ -7,4 +7,4 @@
 | kotlin | MVVM | Coroutine | Jetpack Compose | Hilt | Retrofit |
 
 ## API
-[네이버 검색 API](https://developers.naver.com/apps/#/myapps/iaaD7hoRguIo3Eenn3Xc/overview)
+[네이버 검색 API](https://developers.naver.com/products/service-api/search/search.md)
