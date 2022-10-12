@@ -39,6 +39,8 @@ captures/
 # IntelliJ
 *.iml
 .idea/
+# Comment next line if keeping position of elements in Navigation Editor is relevant for you
+.idea/navEditor.xml
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
@@ -58,18 +60,11 @@ freeline/
 freeline_project_description.json
 
 # fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-fastlane/readme.md
+fastlane/
 
 # Version control
 vcs.xml
 
 # lint
-lint/intermediates/
-lint/generated/
-lint/outputs/
-lint/tmp/
+lint/
 # lint/reports/
