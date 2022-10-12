@@ -15,9 +15,10 @@ class SearchImageViewModel @Inject constructor(
 ): ViewModel() {
     val imageLinkList = mutableStateListOf<String?>()
 
-    fun getSearchImage() {
+    fun getSearchImage(searchText: String) {
+        imageLinkList.clear()
         viewModelScope.launch {
-            val response = searchApiClient.getSearchImage()
+            val response = searchApiClient.getSearchImage(searchText)
             imageLinkList.addAll(response.items.map { item -> item.link })
 
             Log.d(tag, "imageLinkList: ${imageLinkList.toList()}")

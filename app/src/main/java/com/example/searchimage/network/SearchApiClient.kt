@@ -5,7 +5,7 @@ import javax.inject.Inject
 class SearchApiClient @Inject constructor(
     private val searchApi: SearchApi
 ) {
-    suspend fun getSearchImage(): ImageSearchResponse {
-        return searchApi.getSearchImage("apple")
+    suspend fun getSearchImage(searchText: String): ImageSearchResponse {
+        return searchApi.getSearchImage(searchText)
     }
 }

@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initViewModel()
         setContent {
             Column {
                 SearchBar()
@@ -79,10 +78,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun TrailingIconView() {
         IconButton(onClick = {
-            viewModel.getSearchImage()
+            viewModel.getSearchImage(inputValue.value.text)
             inputValue.value = TextFieldValue("")
         }) {
-            Icon(imageVector = Icons.Filled.Search, contentDescription = "")
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = ""
+            )
         }
     }
 
@@ -110,9 +112,5 @@ class MainActivity : ComponentActivity() {
             imageModel = link,
             modifier = Modifier.size(128.dp)
         )
-    }
-
-    private fun initViewModel() {
-        viewModel.getSearchImage()
     }
 }
