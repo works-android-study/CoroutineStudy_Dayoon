@@ -5,7 +5,11 @@ import javax.inject.Inject
 class SearchApiClient @Inject constructor(
     private val searchApi: SearchApi
 ) {
-    suspend fun getSearchImage(searchText: String): ImageSearchResponse {
-        return searchApi.getSearchImage(searchText)
+    suspend fun getSearchImage(
+        searchText: String,
+        searchStart: Int,
+        display: Int
+    ): ImageSearchResponse {
+        return searchApi.getSearchImage(searchText, start = searchStart, display = display)
     }
 }

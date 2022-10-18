@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -17,20 +16,18 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.skydoves.landscapist.glide.GlideImage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private var inputValue: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue())
     private val viewModel: SearchImageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +44,7 @@ class MainActivity : ComponentActivity() {
     @Preview
     @Composable
     fun SearchBar() {
-        inputValue = remember { mutableStateOf(TextFieldValue("")) }
+        val inputValue = remember { viewModel.inputText }
 
         TextField(
             value = inputValue.value,
@@ -78,8 +75,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun TrailingIconView() {
         IconButton(onClick = {
-            viewModel.getSearchImage(inputValue.value.text)
-            inputValue.value = TextFieldValue("")
+            viewModel.searchText.value = viewModel.inputText.value.text
+            viewModel.inputText.value = TextFieldValue("")
         }) {
             Icon(
                 imageVector = Icons.Filled.Search,
@@ -91,19 +88,19 @@ class MainActivity : ComponentActivity() {
     @Preview
     @Composable
     fun ImageList() {
-        val imageLinkList = viewModel.imageLinkList
+        val imageLinkList = viewModel.flow.collectAsLazyPagingItems()
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             content = {
-            items(imageLinkList) { link ->
-                if (link != null) {
-                    ImageItem(link)
+                items(imageLinkList.itemCount) { idx ->
+                    imageLinkList[idx]?.let {
+                        ImageItem(link = it.link)
+                    }
                 }
-            }
-        })
+            })
     }
 
     @Composable

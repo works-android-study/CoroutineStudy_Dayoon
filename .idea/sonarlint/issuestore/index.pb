@@ -17,9 +17,6 @@ A
 Kapp/src/androidTest/java/com/example/searchimage/ExampleInstrumentedTest.kt,c/7/c7c8a7c5cd650992ed78198f6102dc8aa20e4d77
 l
 <app/src/test/java/com/example/searchimage/ExampleUnitTest.kt,a/9/a9461ca6076b3e2c1f333b9071f0ae72aea060c8
-j
-:app/src/main/java/com/example/searchimage/MyApplication.kt,9/8/983aa852d29dd16add2c1ca0a3ac9f34209e9941
-f
-6app/src/main/java/com/example/searchimage/data/Item.kt,a/5/a518da713e6b4bbc7b42e37bbc397dc156e04b5c
-r
-Bapp/src/main/java/com/example/searchimage/network/NetworkModule.kt,b/3/b37df3f28065bd46ce94c2df4c05d2eec528d1fb
+:
+
+.gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
