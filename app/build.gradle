@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -76,6 +78,7 @@ dependencies {
     implementation "androidx.compose.compiler:compiler:$compose_compiler_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$jetpack_navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$jetpack_navigation_version"
+    implementation "androidx.navigation:navigation-compose:$jetpack_navigation_version"
 
     // hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"

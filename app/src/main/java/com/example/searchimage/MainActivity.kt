@@ -5,24 +5,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.searchimage.data.Item
 import com.skydoves.landscapist.glide.GlideImage
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,10 +43,99 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Column {
-                SearchBar()
-                ImageList()
+            SearchImageApp()
+        }
+    }
+
+    @Composable
+    fun SearchImageApp(
+        navController: NavController = rememberNavController()
+    ) {
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentScreen = MyScreen.valueOf(
+            backStackEntry?.destination?.route ?: MyScreen.HomeScreen.name
+        )
+        Scaffold (
+            topBar = {
+                SearchAppBar(
+                    currentScreen = currentScreen,
+                    canNavigateBack = navController.previousBackStackEntry != null,
+                    navigateUp = { navController.navigateUp() }
+                )
             }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController as NavHostController,
+                startDestination = MyScreen.HomeScreen.name,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(MyScreen.HomeScreen.name) {
+                    HomeScreen(navController)
+                }
+                composable(
+                    "${MyScreen.DetailScreen.name}/{item}",
+                    arguments = listOf(
+                        navArgument("item") {
+                            type = NavType.ParcelableType(Item::class.java)
+                        }
+                    )
+                ) {
+                    val item = backStackEntry?.arguments?.getParcelable<Item>("item")
+                    if (item != null) {
+                        DetailScreen(navController, item)
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun SearchAppBar(
+        currentScreen: MyScreen,
+        canNavigateBack: Boolean,
+        navigateUp: () -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        TopAppBar(
+            title = { Text(currentScreen.name) },
+            modifier = modifier,
+            navigationIcon = {
+                if (canNavigateBack) {
+                    IconButton(onClick = navigateUp) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    @Composable
+    fun HomeScreen(navController: NavController) {
+        MainContent(navController)
+    }
+
+    @Composable
+    fun DetailScreen(navController: NavController, item: Item) {
+        Row {
+            GlideImage(
+                imageModel = item.thumbnail
+            )
+            Column {
+                item.title?.let { Text(it) }
+                Text("${item.sizeWidth} X ${item.sizeHeight}")
+            }
+        }
+
+    }
+
+    @Composable
+    fun MainContent(navController: NavController) {
+        Column {
+            SearchBar()
+            ImageList(navController)
         }
     }
 
@@ -85,9 +183,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Preview
     @Composable
-    fun ImageList() {
+    fun ImageList(navController: NavController) {
         val imageLinkList = viewModel.flow.collectAsLazyPagingItems()
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
@@ -97,17 +194,21 @@ class MainActivity : ComponentActivity() {
             content = {
                 items(imageLinkList.itemCount) { idx ->
                     imageLinkList[idx]?.let {
-                        ImageItem(link = it.link)
+                        ImageItem(navController, it)
                     }
                 }
             })
     }
 
     @Composable
-    fun ImageItem(link: String) {
+    fun ImageItem(navController: NavController, item: Item) {
         GlideImage(
-            imageModel = link,
-            modifier = Modifier.size(128.dp)
+            imageModel = item.link,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    navController.navigate("${MyScreen.DetailScreen.name}/$item")
+                }
         )
     }
 }
