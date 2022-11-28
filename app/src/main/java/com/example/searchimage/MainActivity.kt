@@ -1,6 +1,7 @@
 package com.example.searchimage
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -13,12 +14,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -133,9 +138,15 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MainContent(navController: NavController) {
+        viewModel.initBookmarkList()
+        val searchText = viewModel.searchText.observeAsState()
         Column {
             SearchBar()
-            ImageList(navController)
+            if (searchText.value.isNullOrEmpty()) {
+                BookmarkList(navController)
+            } else {
+                ImageList(navController)
+            }
         }
     }
 
@@ -144,43 +155,73 @@ class MainActivity : ComponentActivity() {
     fun SearchBar() {
         val inputValue = remember { viewModel.inputText }
 
-        TextField(
-            value = inputValue.value,
-            onValueChange = { inputValue.value = it },
-            maxLines = 1,
-            shape = CircleShape,
-            modifier = Modifier
-                .padding(all = 16.dp)
-                .fillMaxWidth()
-                .border(1.dp, Color.LightGray, CircleShape),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Gray,
-                disabledTextColor = Color.Transparent,
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            trailingIcon = {
-                if (inputValue.value.text.isNotBlank()) {
-                    TrailingIconView()
+        Row {
+            TextField(
+                value = inputValue.value,
+                onValueChange = { inputValue.value = it },
+                maxLines = 1,
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .fillMaxWidth(0.8f)
+                    .border(1.dp, Color.LightGray, CircleShape),
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = Color.Gray,
+                    disabledTextColor = Color.Transparent,
+                    backgroundColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                ),
+                trailingIcon = {
+                    if (inputValue.value.text.isNotBlank()) {
+                        TrailingIconView()
+                    }
                 }
-            }
-        )
+            )
+            SearchIconView()
+        }
     }
 
-    @Preview
     @Composable
     fun TrailingIconView() {
         IconButton(onClick = {
-            viewModel.searchText.value = viewModel.inputText.value.text
             viewModel.inputText.value = TextFieldValue("")
+            viewModel.searchText.value = viewModel.inputText.value.text
+        }) {
+            Icon(
+                imageVector = Icons.Filled.Clear,
+                contentDescription = ""
+            )
+        }
+    }
+
+    @Composable
+    fun SearchIconView() {
+        IconButton(onClick = {
+            viewModel.searchText.value = viewModel.inputText.value.text
         }) {
             Icon(
                 imageVector = Icons.Filled.Search,
                 contentDescription = ""
             )
         }
+    }
+
+    @Composable
+    fun BookmarkList(navController: NavController) {
+        val imageLinkList = viewModel.bookmarkListLiveData.observeAsState().value ?: emptyList()
+        Log.d("searchTest", "bookmarkList: $imageLinkList")
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 128.dp),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(imageLinkList.size) { idx ->
+                    ImageItem(navController, imageLinkList[idx])
+                }
+            })
     }
 
     @Composable
@@ -210,5 +251,27 @@ class MainActivity : ComponentActivity() {
                     navController.navigate("${MyScreen.DetailScreen.name}/$item")
                 }
         )
+        Box(contentAlignment = Alignment.TopEnd) {
+            Icon(
+                painter = painterResource(
+                    id =
+                    if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
+                        R.drawable.ic_baseline_star_24
+                    } else {
+                        R.drawable.ic_baseline_star_border_24
+                    }
+                ),
+                contentDescription = "bookmark",
+                tint = Color.Yellow,
+                modifier = Modifier.clickable {
+                    Log.d("searchTest", "bookmarkList: ${viewModel.bookmarkListLiveData.value}")
+                    if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
+                        viewModel.deleteBookmark(item)
+                    } else {
+                        viewModel.addBookmark(item)
+                    }
+                },
+            )
+        }
     }
 }
