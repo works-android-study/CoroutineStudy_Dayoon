@@ -31,6 +31,8 @@ class SearchImageViewModel @Inject constructor(
 
     lateinit var bookmarkListLiveData: LiveData<List<Item>>
 
+    val detailItemLiveData = MutableLiveData<Item>()
+
     fun initBookmarkList() {
         bookmarkListLiveData = bookmarkLocalApi.getBookmarkList()!!
     }

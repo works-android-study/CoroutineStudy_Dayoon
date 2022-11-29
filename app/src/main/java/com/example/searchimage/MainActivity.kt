@@ -29,12 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.searchimage.data.Item
 import com.skydoves.landscapist.glide.GlideImage
@@ -77,18 +75,8 @@ class MainActivity : ComponentActivity() {
                 composable(MyScreen.HomeScreen.name) {
                     HomeScreen(navController)
                 }
-                composable(
-                    "${MyScreen.DetailScreen.name}/{item}",
-                    arguments = listOf(
-                        navArgument("item") {
-                            type = NavType.ParcelableType(Item::class.java)
-                        }
-                    )
-                ) {
-                    val item = backStackEntry?.arguments?.getParcelable<Item>("item")
-                    if (item != null) {
-                        DetailScreen(navController, item)
-                    }
+                composable(MyScreen.DetailScreen.name) {
+                    DetailScreen()
                 }
             }
         }
@@ -123,14 +111,17 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun DetailScreen(navController: NavController, item: Item) {
-        Row {
+    fun DetailScreen() {
+        val detailItem = viewModel.detailItemLiveData.observeAsState()
+        Column {
             GlideImage(
-                imageModel = item.thumbnail
+                imageModel = detailItem.value?.thumbnail,
+                modifier = Modifier
+                    .fillMaxHeight(0.7f)
             )
             Column {
-                item.title?.let { Text(it) }
-                Text("${item.sizeWidth} X ${item.sizeHeight}")
+                detailItem.value?.title?.let { Text(it) }
+                Text("${detailItem.value?.sizeWidth} X ${detailItem.value?.sizeHeight}")
             }
         }
 
@@ -246,16 +237,17 @@ class MainActivity : ComponentActivity() {
         GlideImage(
             imageModel = item.link,
             modifier = Modifier
-                .fillMaxWidth()
+                .width(200.dp)
+                .height(200.dp)
                 .clickable {
-                    navController.navigate("${MyScreen.DetailScreen.name}/$item")
+                    viewModel.detailItemLiveData.postValue(item)
+                    navController.navigate(MyScreen.DetailScreen.name)
                 }
         )
         Box(contentAlignment = Alignment.TopEnd) {
             Icon(
                 painter = painterResource(
-                    id =
-                    if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
+                    id = if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
                         R.drawable.ic_baseline_star_24
                     } else {
                         R.drawable.ic_baseline_star_border_24
