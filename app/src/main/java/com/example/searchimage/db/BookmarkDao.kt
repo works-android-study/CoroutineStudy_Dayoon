@@ -5,16 +5,17 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
+import com.example.searchimage.model.entity.Bookmark
 
 @Dao
 interface BookmarkDao {
     @Insert
-    suspend fun insert(item: Item)
+    suspend fun insert(bookmark: Bookmark)
 
     @Delete
-    suspend fun delete(item: Item)
+    suspend fun delete(bookmark: Bookmark)
 
-    @Query("SELECT * FROM item")
-    fun getBookmarkList(): LiveData<List<Item>>
+    @Query("SELECT * FROM bookmark")
+    fun getBookmarkList(): LiveData<List<Bookmark>>
 }

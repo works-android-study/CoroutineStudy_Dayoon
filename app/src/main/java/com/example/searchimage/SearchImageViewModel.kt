@@ -7,8 +7,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.paging.liveData
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
 import com.example.searchimage.db.BookmarkLocalApi
+import com.example.searchimage.model.entity.Bookmark
 import com.example.searchimage.network.SearchApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,7 @@ class SearchImageViewModel @Inject constructor(
         MyPagingSource(searchApiClient, it)
     }.liveData.cachedIn(viewModelScope) }.asFlow()
 
-    lateinit var bookmarkListLiveData: LiveData<List<Item>>
+    lateinit var bookmarkListLiveData: LiveData<List<Bookmark>>
 
     val detailItemLiveData = MutableLiveData<Item>()
 

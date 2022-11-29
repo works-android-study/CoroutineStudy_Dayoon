@@ -1,6 +1,6 @@
 package com.example.searchimage.network
 
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
 
 data class ImageSearchResponse(
     val lastBuildDate: String,

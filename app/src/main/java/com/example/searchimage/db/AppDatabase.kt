@@ -2,9 +2,10 @@ package com.example.searchimage.db
 
 import android.content.Context
 import androidx.room.*
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
+import com.example.searchimage.model.entity.Bookmark
 
-@Database(entities = [Item::class], version = 1)
+@Database(entities = [Bookmark::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarkDao() : BookmarkDao
 

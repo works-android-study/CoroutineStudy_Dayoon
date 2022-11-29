@@ -3,7 +3,7 @@ package com.example.searchimage
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
 import com.example.searchimage.network.SearchApiClient
 
 /**

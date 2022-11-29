@@ -34,7 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.searchimage.data.Item
+import com.example.searchimage.model.dto.Item
 import com.skydoves.landscapist.glide.GlideImage
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -201,16 +201,16 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BookmarkList(navController: NavController) {
-        val imageLinkList = viewModel.bookmarkListLiveData.observeAsState().value ?: emptyList()
-        Log.d("searchTest", "bookmarkList: $imageLinkList")
+        val bookmarkLinkList = viewModel.bookmarkListLiveData.observeAsState().value ?: emptyList()
+        Log.d("searchTest", "bookmarkList: $bookmarkLinkList")
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             content = {
-                items(imageLinkList.size) { idx ->
-                    ImageItem(navController, imageLinkList[idx])
+                items(bookmarkLinkList.size) { idx ->
+                    ImageItem(navController, bookmarkLinkList[idx].convertToItem())
                 }
             })
     }
