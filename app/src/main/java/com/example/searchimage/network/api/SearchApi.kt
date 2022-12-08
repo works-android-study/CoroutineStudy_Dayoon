@@ -1,5 +1,6 @@
-package com.example.searchimage.network
+package com.example.searchimage.network.api
 
+import com.example.searchimage.network.ImageSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

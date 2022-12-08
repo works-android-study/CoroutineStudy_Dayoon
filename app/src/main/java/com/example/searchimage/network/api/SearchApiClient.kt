@@ -1,5 +1,6 @@
-package com.example.searchimage.network
+package com.example.searchimage.network.api
 
+import com.example.searchimage.network.ImageSearchResponse
 import javax.inject.Inject
 
 class SearchApiClient @Inject constructor(

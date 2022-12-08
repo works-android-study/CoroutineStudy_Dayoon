@@ -1,10 +1,10 @@
-package com.example.searchimage
+package com.example.searchimage.network
 
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.searchimage.model.dto.Item
-import com.example.searchimage.network.SearchApiClient
+import com.example.searchimage.network.api.SearchApiClient
 
 /**
  * https://developer.android.com/topic/libraries/architecture/paging/v3-paged-data?hl=ko

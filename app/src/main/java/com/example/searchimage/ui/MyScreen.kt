@@ -1,4 +1,4 @@
-package com.example.searchimage
+package com.example.searchimage.ui
 
 enum class MyScreen {
     HomeScreen,

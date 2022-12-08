@@ -1,4 +1,4 @@
-package com.example.searchimage
+package com.example.searchimage.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.searchimage.R
 import com.example.searchimage.model.dto.Item
 import com.skydoves.landscapist.glide.GlideImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -122,6 +123,11 @@ class MainActivity : ComponentActivity() {
             Column {
                 detailItem.value?.title?.let { Text(it) }
                 Text("${detailItem.value?.sizeWidth} X ${detailItem.value?.sizeHeight}")
+            }
+            Button(onClick = {
+                detailItem.value?.let { viewModel.downloadImage(it) }
+            }) {
+                Text(text = "download")
             }
         }
 
