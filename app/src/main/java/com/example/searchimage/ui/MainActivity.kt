@@ -113,6 +113,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun DetailScreen() {
+        viewModel.downloadProgressLiveData.postValue(0)
         val detailItem = viewModel.detailItemLiveData.observeAsState()
         Column {
             GlideImage(
@@ -129,8 +130,23 @@ class MainActivity : ComponentActivity() {
             }) {
                 Text(text = "download")
             }
+            DownloadProgress(detailItem.value?.link)
         }
 
+    }
+
+    @Composable
+    fun DownloadProgress(imgUrl: String?) {
+        val downloadProgress = viewModel.downloadProgressLiveData.observeAsState()
+        if (downloadProgress.value != null && imgUrl == viewModel.detailItemLiveData.value?.link) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                LinearProgressIndicator(
+                    progress = downloadProgress.value!!.toFloat(),
+                    backgroundColor = Color.LightGray,
+                    color = Color.Blue
+                )
+            }
+        }
     }
 
     @Composable

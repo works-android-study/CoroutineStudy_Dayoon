@@ -44,6 +44,8 @@ class SearchImageViewModel @Inject constructor(
 
     val detailItemLiveData = MutableLiveData<Item>()
 
+    val downloadProgressLiveData = MutableLiveData(0)
+
     fun initBookmarkList() {
         bookmarkListLiveData = bookmarkLocalApi.getBookmarkList()!!
     }
@@ -66,13 +68,14 @@ class SearchImageViewModel @Inject constructor(
                     .downloadImage(item.link)
                     .downloadToFileWithProgress(
                         File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "coroutine"),
-                        "title",
+                        System.currentTimeMillis().toString(),
                     )
                     .collect { download ->
                         when (download) {
                             is Download.Progress -> {
                                 // update ui with progress
                                 Log.d("PROGRESS", "${download.percent}")
+                                downloadProgressLiveData.postValue(download.percent)
                             }
                             is Download.Finished -> {
                                 // update ui with file
