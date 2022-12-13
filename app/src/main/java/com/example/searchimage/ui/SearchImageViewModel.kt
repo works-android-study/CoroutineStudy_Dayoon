@@ -1,6 +1,5 @@
 package com.example.searchimage.ui
 
-import android.app.Application
 import android.os.Environment
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -20,17 +19,17 @@ import com.example.searchimage.network.api.SearchApiClient
 import com.example.searchimage.download.downloadToFileWithProgress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchImageViewModel @Inject constructor(
-    application: Application,
     private val searchApiClient: SearchApiClient,
     private val downloadApiClient: DownloadApiClient,
     private val bookmarkLocalApi: BookmarkLocalApi
-): AndroidViewModel(application) {
+): ViewModel() {
     val inputText = mutableStateOf(TextFieldValue(""))
     val searchText = MutableLiveData<String>()
 
@@ -40,14 +39,14 @@ class SearchImageViewModel @Inject constructor(
         MyPagingSource(searchApiClient, it)
     }.liveData.cachedIn(viewModelScope) }.asFlow()
 
-    lateinit var bookmarkListLiveData: LiveData<List<Bookmark>>
+    lateinit var bookmarkListFlow: Flow<List<Bookmark>>
 
     val detailItemLiveData = MutableLiveData<Item>()
 
     val downloadProgressLiveData = MutableLiveData(0)
 
     fun initBookmarkList() {
-        bookmarkListLiveData = bookmarkLocalApi.getBookmarkList()!!
+        bookmarkListFlow = bookmarkLocalApi.getBookmarkList()!!
     }
 
     fun addBookmark(item: Item) {

@@ -7,11 +7,11 @@ import com.example.searchimage.model.dto.Item
 
 @Entity
 data class Bookmark (
-    @ColumnInfo val title: String?,
+    @ColumnInfo val title: String? = null,
     @PrimaryKey val link: String,
-    @ColumnInfo val thumbnail: String?,
-    @ColumnInfo val sizeHeight: String?,
-    @ColumnInfo val sizeWidth: String?
+    @ColumnInfo val thumbnail: String? = null,
+    @ColumnInfo val sizeHeight: String? = null,
+    @ColumnInfo val sizeWidth: String? = null
 ) {
     fun convertToItem(): Item {
         return Item(

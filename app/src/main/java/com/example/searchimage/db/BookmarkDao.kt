@@ -1,12 +1,11 @@
 package com.example.searchimage.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.searchimage.model.dto.Item
 import com.example.searchimage.model.entity.Bookmark
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookmarkDao {
@@ -17,5 +16,5 @@ interface BookmarkDao {
     suspend fun delete(bookmark: Bookmark)
 
     @Query("SELECT * FROM bookmark")
-    fun getBookmarkList(): LiveData<List<Bookmark>>
+    fun getBookmarkList(): Flow<List<Bookmark>>
 }

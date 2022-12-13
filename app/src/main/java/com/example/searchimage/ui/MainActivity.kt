@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -223,7 +224,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BookmarkList(navController: NavController) {
-        val bookmarkLinkList = viewModel.bookmarkListLiveData.observeAsState().value ?: emptyList()
+        val bookmarkLinkList = viewModel.bookmarkListFlow.collectAsState(listOf()).value
         Log.d("searchTest", "bookmarkList: $bookmarkLinkList")
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
@@ -267,9 +268,10 @@ class MainActivity : ComponentActivity() {
                 }
         )
         Box(contentAlignment = Alignment.TopEnd) {
+            val bookmarkLinkList = viewModel.bookmarkListFlow.collectAsState(listOf()).value
             Icon(
                 painter = painterResource(
-                    id = if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
+                    id = if (bookmarkLinkList.map { it.link }.contains(item.link)) {
                         R.drawable.ic_baseline_star_24
                     } else {
                         R.drawable.ic_baseline_star_border_24
@@ -278,8 +280,8 @@ class MainActivity : ComponentActivity() {
                 contentDescription = "bookmark",
                 tint = Color.Yellow,
                 modifier = Modifier.clickable {
-                    Log.d("searchTest", "bookmarkList: ${viewModel.bookmarkListLiveData.value}")
-                    if (viewModel.bookmarkListLiveData.value?.map { it.link }?.contains(item.link) == true) {
+                    Log.d("searchTest", "bookmarkList: $bookmarkLinkList")
+                    if (bookmarkLinkList.map { it.link }.contains(item.link)) {
                         viewModel.deleteBookmark(item)
                     } else {
                         viewModel.addBookmark(item)
