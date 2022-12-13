@@ -1,7 +1,6 @@
 package com.example.searchimage
 
 import com.example.searchimage.db.BookmarkLocalApi
-import com.example.searchimage.model.dto.Item
 import com.example.searchimage.model.entity.Bookmark
 import com.example.searchimage.network.api.DownloadApiClient
 import com.example.searchimage.network.api.SearchApiClient
